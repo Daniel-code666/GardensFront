@@ -181,3 +181,15 @@ npm run build -- --configuration production
 - Preferir signals para estado de interfaz y RxJS para operaciones asíncronas.
 - Mantener los DTO sincronizados con los contratos del backend.
 - Reutilizar las variables visuales definidas en `huerta-styles.css`.
+
+## Documentación para GitHub Pages
+
+La página de presentación del proyecto se encuentra en [`index.html`](index.html) y utiliza recursos locales de [`site-assets/`](site-assets/).
+
+Puede previsualizarse desde la raíz del repositorio con:
+
+```powershell
+python -m http.server 4174
+```
+
+Luego abra `http://localhost:4174`.
