@@ -1,0 +1,75 @@
+# Dependencies
+/node_modules/
+/.npm/
+/.yarn/
+/.pnpm-store/
+
+# Angular and build output
+/.angular/
+/dist/
+/tmp/
+/out-tsc/
+/bazel-out/
+*.tsbuildinfo
+
+# Test and analysis output
+/coverage/
+/test-results/
+/playwright-report/
+/__screenshots__/
+/.nyc_output/
+.eslintcache
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Local environment files
+.env
+.env.*
+!.env.example
+/src/environments/environment.local.ts
+/src/environments/environment.*.local.ts
+
+# IDEs and editors
+/.idea/
+/.c9/
+/.history/
+/.fleet/
+.project
+.classpath
+.settings/
+*.launch
+*.sublime-project
+*.sublime-workspace
+
+# Visual Studio Code: keep shared project configuration
+/.vscode/*
+!/.vscode/settings.json
+!/.vscode/tasks.json
+!/.vscode/launch.json
+!/.vscode/extensions.json
+!/.vscode/mcp.json
+
+# Tool caches and temporary files
+/.cache/
+/.sass-cache/
+/.vite/
+/connect.lock
+/libpeerconnection.log
+/testem.log
+/typings/
+*.tmp
+*.temp
+
+# Operating system files
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/

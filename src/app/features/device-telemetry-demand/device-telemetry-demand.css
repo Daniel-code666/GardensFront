@@ -1,0 +1,366 @@
+:host {
+  display: block;
+  max-width: 80rem;
+  margin: 0 auto;
+}
+
+.page-breadcrumb {
+  display: block;
+  margin-bottom: 1rem;
+  --p-breadcrumb-background: transparent;
+  --p-breadcrumb-padding: 0;
+  --p-breadcrumb-item-color: var(--text-muted);
+  --p-breadcrumb-item-hover-color: var(--primary);
+  --p-breadcrumb-last-item-color: var(--text);
+  --p-breadcrumb-separator-color: var(--text-subtle);
+}
+
+.filter-panel {
+  margin-bottom: 1rem;
+}
+
+.telemetry-filter-form {
+  display: grid;
+  grid-template-columns: minmax(9rem, 0.45fr) repeat(2, minmax(13rem, 1fr)) minmax(7rem, 0.5fr) minmax(10rem, 0.65fr);
+  align-items: end;
+  gap: 0.85rem;
+}
+
+.filter-field p-datepicker {
+  display: block;
+  width: 100%;
+}
+
+.filter-field .field-error {
+  margin: 0.35rem 0 0;
+}
+
+.filter-button {
+  width: 100%;
+  min-height: 2.85rem;
+  white-space: nowrap;
+}
+
+.filter-feedback {
+  grid-column: 1 / -1;
+}
+
+.telemetry-content {
+  display: grid;
+  gap: 1rem;
+}
+
+.device-list {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  background: var(--surface);
+}
+
+.device-item {
+  display: grid;
+  grid-template-columns: 5rem minmax(0, 1fr) minmax(11rem, 0.45fr);
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1.35rem;
+}
+
+.device-icon {
+  width: 5rem;
+  height: 5rem;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--primary-border);
+  border-radius: 1rem;
+  color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.device-icon .material-symbols-outlined {
+  font-size: 2.5rem;
+}
+
+.device-title-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.device-title-row h2,
+.chart-heading h2 {
+  margin: 0;
+  color: var(--text);
+  font-size: 1.05rem;
+}
+
+.device-description {
+  margin: 0.35rem 0 1rem;
+  color: var(--text-subtle);
+  font-size: 0.82rem;
+}
+
+.device-details {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem 1.5rem;
+  margin: 0;
+}
+
+.device-details > div {
+  min-width: 0;
+}
+
+.device-details dt,
+.special-pins dt {
+  color: var(--text-subtle);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.device-details dd,
+.special-pins dd {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.device-details code,
+.special-pins dd {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+}
+
+.special-pins {
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.85rem;
+  background: var(--surface-muted);
+}
+
+.special-pins h3 {
+  margin: 0 0 0.65rem;
+  color: var(--text);
+  font-size: 0.78rem;
+}
+
+.special-pins dl {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0;
+}
+
+.special-pins dl > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.command-panel {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 0.8rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.command-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.command-heading > .material-symbols-outlined {
+  color: var(--primary);
+  font-size: 1.5rem;
+}
+
+.command-heading h3 {
+  margin: 0;
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.command-heading small,
+.command-description {
+  color: var(--text-subtle);
+  font-size: 0.75rem;
+}
+
+.command-controls {
+  display: grid;
+  grid-template-columns: minmax(13rem, 1fr) minmax(11rem, 0.7fr) auto;
+  align-items: end;
+  gap: 0.75rem;
+}
+
+.command-select {
+  width: 100%;
+  min-height: 2.85rem;
+  padding: 0.7rem 2.2rem 0.7rem 0.85rem;
+  border: 1px solid #c9d0c9;
+  border-radius: 0.72rem;
+  color: var(--text);
+  background: var(--surface);
+}
+
+.command-select:focus {
+  border-color: var(--primary);
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(40, 91, 58, 0.1);
+}
+
+.command-button {
+  min-height: 2.85rem;
+  white-space: nowrap;
+}
+
+.command-description {
+  margin: 0;
+}
+
+.command-panel > .alert {
+  margin: 0;
+}
+
+.telemetry-summary {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.summary-card {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.9rem;
+  background: var(--surface);
+}
+
+.summary-card > .material-symbols-outlined {
+  width: 3rem;
+  height: 3rem;
+  flex: 0 0 3rem;
+  display: grid;
+  place-items: center;
+  overflow: visible;
+  padding: 0;
+  border-radius: 0.7rem;
+  color: var(--primary);
+  background: var(--primary-soft);
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.summary-card div {
+  min-width: 0;
+  display: grid;
+}
+
+.summary-card small {
+  color: var(--text-subtle);
+  font-size: 0.7rem;
+}
+
+.summary-card strong {
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.chart-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.chart-heading p {
+  margin: 0.3rem 0 0;
+  color: var(--text-subtle);
+  font-size: 0.78rem;
+}
+
+.chart-unit {
+  flex: 0 0 auto;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  color: var(--primary);
+  background: var(--primary-soft);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.device-state {
+  min-height: 12rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 2rem;
+  color: var(--text-muted);
+}
+
+.device-state--empty {
+  flex-direction: column;
+  text-align: center;
+}
+
+.device-state--empty .material-symbols-outlined {
+  color: var(--text-subtle);
+  font-size: 2.5rem;
+}
+
+@media (max-width: 960px) {
+  .telemetry-filter-form {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .command-controls {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .telemetry-summary {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .telemetry-filter-form {
+    grid-template-columns: 1fr;
+  }
+
+  .device-item {
+    grid-template-columns: 4rem minmax(0, 1fr);
+    align-items: start;
+    padding: 1rem;
+  }
+
+  .device-icon {
+    width: 4rem;
+    height: 4rem;
+  }
+
+  .device-details,
+  .telemetry-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .special-pins {
+    grid-column: 1 / -1;
+  }
+
+  .chart-heading {
+    align-items: flex-start;
+  }
+
+  .command-controls {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,253 @@
+<p-breadcrumb class="page-breadcrumb" [model]="breadcrumbItems" />
+<div class="page-heading">
+    <div>
+        <h1>Telemetría del {{device()?.deviceType}} {{device()?.name}}</h1>
+        <p>Datos históricos del dispositivo</p>
+    </div>
+</div>
+
+<div class="panel filter-panel">
+    <form class="telemetry-filter-form" [formGroup]="form" (ngSubmit)="getDevicesWithTelemetryFromForm()" novalidate>
+        <div class="field filter-field">
+            <label for="itemPerRequest">Cantidad de lecturas (número positivo)</label>
+            <input id="itemPerRequest" type="number" formControlName="itemPerRequest" placeholder="20" />
+            @if (form.controls.itemPerRequest.touched && form.controls.itemPerRequest.invalid) {
+                <small class="field-error">Ingrese un número mayor a 1</small>
+            }
+        </div>
+
+        <div class="field filter-field">
+            <label for="startDate">Fecha de inicio</label>
+            <p-datepicker
+                inputId="startDate"
+                formControlName="startDate"
+                dateFormat="dd/mm/yy"
+                placeholder="dd/mm/yyyy"
+                [showIcon]="true"
+                iconDisplay="input"
+                [inputStyle]="{ width: '100%' }"
+            />
+        </div>
+
+        <div class="field filter-field">
+            <label for="endDate">Fecha de fin</label>
+            <p-datepicker
+                inputId="endDate"
+                formControlName="endDate"
+                dateFormat="dd/mm/yy"
+                placeholder="dd/mm/yyyy"
+                [showIcon]="true"
+                iconDisplay="input"
+                [inputStyle]="{ width: '100%' }"
+            />
+        </div>
+
+        @if (error()) {
+            <div class="alert alert-error filter-feedback" role="alert">{{ error() }}</div>
+        }
+
+        <button class="primary-button filter-button" type="submit" [disabled]="loading()">
+            {{ loading() ? 'Buscando...' : 'Buscar' }}
+        </button>
+        <button class="secondary-button filter-button" type="button" [disabled]="loading()" (click)="reload()">
+            {{loading() ? 'Limpiando...' : 'Limpiar filtros'}}
+        </button>
+    </form>
+</div>
+
+<section class="telemetry-content">
+    @if (loading()) {
+    <div class="device-state" role="status">
+        <span class="material-symbols-outlined" aria-hidden="true">progress_activity</span>
+        Cargando telemetría…
+    </div>
+    } @else if (error()) {
+    <div class="alert alert-error" role="alert">{{ error() }}</div>
+    } @else if (telemetry().length === 0) {
+    <div class="device-state device-state--empty">
+        <span class="material-symbols-outlined" aria-hidden="true">query_stats</span>
+        <strong>No hay registros de telemetría.</strong>
+        <small>Las lecturas del dispositivo aparecerán en esta sección.</small>
+    </div>
+    } @else {
+    <div class="device-list">
+        <article class="device-item">
+            <div class="device-icon" aria-hidden="true">
+                @if (device()?.deviceType === 'Sensor')
+                {
+                <span class="material-symbols-outlined">sensors</span>
+                }
+                @else {
+                <span class="material-symbols-outlined">electric_bolt</span>
+                }
+            </div>
+
+            <div class="device-content">
+                <div class="device-title-row">
+                    <h2>{{ device()?.name }}</h2>
+                    <p-tag [value]="device()?.active ? 'Activo' : 'Inactivo'"
+                        [severity]="device()?.active ? 'success' : 'danger'" />
+                </div>
+
+                <p class="device-description">
+                    {{ device()?.customName || 'Sin nombre personalizado' }}
+                </p>
+
+                <dl class="device-details">
+                    <div>
+                        <dt>Tipo de dispositivo</dt>
+                        <dd class="device-identifier" [title]="device()?.deviceType">
+                            <code>{{ device()?.deviceType }}</code>
+                        </dd>
+                    </div>
+                    <div>
+                        <dt>Pin de conexión</dt>
+                        @if (device()?.connectionType == 'I2C')
+                        {
+                        <dd>Conectado a pines I2C</dd>
+                        }
+                        @else {
+                        <dd>{{device()?.devicePin ?? 'No conectado'}}</dd>
+                        }
+                    </div>
+                    <div>
+                        <dt>Tipo de conexión</dt>
+                        <dd>{{ device()?.connectionType }}</dd>
+                    </div>
+                    <div>
+                        <dt>Tipo de medición</dt>
+                        <dd><code>{{ device()?.deviceType === 'Sensor' ? device()?.measurementType : 'El actuador no mide nada' }}</code>
+                        </dd>
+                    </div>
+                    <div>
+                        <dt>Unidad de medición</dt>
+                        <dd class="device-identifier" [title]="device()?.measurementUnit">
+                            <code>{{ device()?.deviceType === 'Sensor' ? device()?.measurementUnit : 'El actuador no mide nada' }}</code>
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+
+            @if (device()?.connectionType === 'I2C') {
+                <aside class="special-pins">
+                <h3>Pines especiales</h3>
+                <dl>
+                    <div>
+                        <dt>Pin I2C SDA</dt>
+                        <dd>{{ device()?.i2cSdaPin ?? 'No definido' }}</dd>
+                    </div>
+                    <div>
+                        <dt>Pin I2C SCL</dt>
+                        <dd>{{ device()?.i2cSclPin ?? 'No definido' }}</dd>
+                    </div>
+                    <div>
+                        <dt>Dirección I2C</dt>
+                        <dd>{{ device()?.i2cAddress || 'No definida' }}</dd>
+                    </div>
+                </dl>
+                </aside>
+            }
+
+            <section class="command-panel" aria-labelledby="command-title">
+                <div class="command-heading">
+                    <span class="material-symbols-outlined" aria-hidden="true">terminal</span>
+                    <div>
+                        <h3 id="command-title">Comandos del dispositivo</h3>
+                        <small>La ejecución requiere que el dispositivo esté activo y conectado.</small>
+                    </div>
+                </div>
+
+                <div class="command-controls">
+                    <div class="field">
+                        <label for="deviceCommand">Comando</label>
+                        <select
+                            id="deviceCommand"
+                            class="command-select"
+                            [value]="selectedCommand()"
+                            [disabled]="commandLoading()"
+                            (change)="onCommandChange($event)"
+                        >
+                            @for (command of availableCommands(); track command.value) {
+                                <option [value]="command.value">{{ command.label }}</option>
+                            }
+                        </select>
+                    </div>
+
+                    @if (selectedCommand() === 'SetWaterPumpControlMode') {
+                        <div class="field">
+                            <label for="actuatorMode">Modo de control</label>
+                            <select
+                                id="actuatorMode"
+                                class="command-select"
+                                [value]="selectedMode()"
+                                [disabled]="commandLoading()"
+                                (change)="onModeChange($event)"
+                            >
+                                <option value="Manual">Manual</option>
+                                <option value="Automatic">Automático</option>
+                            </select>
+                        </div>
+                    } @else if (selectedCommand() === 'SetWaterPumpState') {
+                        <div class="field">
+                            <label for="actuatorState">Estado</label>
+                            <select
+                                id="actuatorState"
+                                class="command-select"
+                                [value]="selectedState()"
+                                [disabled]="commandLoading()"
+                                (change)="onStateChange($event)"
+                            >
+                                <option value="true">Encendido</option>
+                                <option value="false">Apagado</option>
+                            </select>
+                        </div>
+                    }
+
+                    <button
+                        class="primary-button command-button"
+                        type="button"
+                        [disabled]="commandLoading() || !device()?.active"
+                        (click)="executeSelectedCommand()"
+                    >
+                        {{ commandLoading() ? 'Ejecutando...' : 'Ejecutar comando' }}
+                    </button>
+                </div>
+
+                <p class="command-description">{{ selectedCommandOption().description }}</p>
+
+                @if (commandMessage()) {
+                    <div class="alert alert-success" role="status">{{ commandMessage() }}</div>
+                }
+                @if (commandError()) {
+                    <div class="alert alert-error" role="alert">{{ commandError() }}</div>
+                }
+            </section>
+        </article>
+    </div>
+
+    <div class="telemetry-summary" aria-label="Resumen de telemetría">
+        @for (metric of summaryMetrics(); track metric.label) {
+        <article class="summary-card">
+            <span class="material-symbols-outlined" aria-hidden="true">{{ metric.icon }}</span>
+            <div>
+                <small>{{ metric.label }}</small>
+                <strong>{{ metric.value }}</strong>
+            </div>
+        </article>
+        }
+    </div>
+
+    <div class="panel chart-panel">
+        <div class="chart-heading">
+            <div>
+                <h2>Histórico de telemetría</h2>
+                <p>Pase el cursor sobre un punto para consultar la fecha y el valor exactos.</p>
+            </div>
+            <span class="chart-unit">{{ isActuator() ? 'Estado' : measurementUnitLabel() }}</span>
+        </div>
+
+        <p-chart type="line" [data]="chartData()" [options]="options" height="360px"
+            ariaLabel="Gráfica histórica de telemetría del dispositivo" />
+    </div>
+    }
+</section>

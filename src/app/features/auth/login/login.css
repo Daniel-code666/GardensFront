@@ -1,0 +1,95 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.login-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 2rem 1rem;
+  background:
+    radial-gradient(circle at 18% 15%, rgba(112, 159, 105, 0.2), transparent 28rem),
+    radial-gradient(circle at 88% 85%, rgba(184, 139, 72, 0.16), transparent 24rem),
+    var(--surface-muted);
+}
+
+.login-card {
+  width: min(100%, 28rem);
+  padding: 2.4rem;
+  border: 1px solid var(--border);
+  border-radius: 1.5rem;
+  background: rgba(255, 255, 252, 0.94);
+  box-shadow: var(--shadow-lg);
+}
+
+.brand-mark {
+  width: 3rem;
+  height: 3rem;
+  display: grid;
+  place-items: center;
+  margin-bottom: 1.25rem;
+  border-radius: 1rem;
+  background: var(--primary);
+}
+
+.brand-mark span {
+  width: 1.45rem;
+  height: 1.8rem;
+  display: block;
+  border-radius: 100% 0 100% 0;
+  background: var(--accent-soft);
+  transform: rotate(-12deg);
+}
+
+.intro {
+  margin: 0.75rem 0 1.75rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+.password-field {
+  position: relative;
+}
+
+.password-field input {
+  padding-right: 4.5rem;
+}
+
+.visibility-button {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  padding: 0.2rem;
+  border: 0;
+  color: var(--primary);
+  background: transparent;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.login-button {
+  width: 100%;
+  margin-top: 1.25rem;
+}
+
+.local-note {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1.5rem 0 0;
+  color: var(--text-subtle);
+  font-size: 0.8rem;
+}
+
+.local-note span {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--success);
+  box-shadow: 0 0 0 0.22rem rgba(58, 127, 78, 0.14);
+}

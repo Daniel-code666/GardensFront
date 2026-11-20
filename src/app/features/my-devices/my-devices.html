@@ -1,0 +1,101 @@
+<div class="page-heading">
+    <div>
+        <h1>Mis dispositivos</h1>
+        <p>Gestione los dispositivos asociados a su usuario</p>
+    </div>
+</div>
+
+<section class="panel devices-panel">
+    @if (loading()) {
+        <div class="device-state" role="status">
+            <span class="material-symbols-outlined" aria-hidden="true">progress_activity</span>
+            Cargando dispositivos…
+        </div>
+    } @else if (error()) {
+        <div class="alert alert-error" role="alert">{{ error() }}</div>
+    } @else if (microcontrollerDevices().length === 0) {
+        <div class="device-state device-state--empty">
+            <span class="material-symbols-outlined" aria-hidden="true">developer_board_off</span>
+            <strong>No hay dispositivos asociados.</strong>
+            <small>Los microcontroladores enlazados aparecerán en esta sección.</small>
+        </div>
+    } @else {
+        <p-dataview
+            [value]="microcontrollerDevices()"
+            [rows]="5"
+            [paginator]="microcontrollerDevices().length > 5"
+        >
+            <ng-template #list let-items>
+                <div class="device-list">
+                    @for (item of items; track item.id; let first = $first) {
+                        <article class="device-item" [class.device-item--divided]="!first">
+                            <div class="device-icon" aria-hidden="true">
+                                <span class="material-symbols-outlined">developer_board</span>
+                            </div>
+
+                            <div class="device-content">
+                                <div class="device-title-row">
+                                    <h2>{{ item.name }}</h2>
+                                    <p-tag
+                                        [value]="item.active ? 'Activo' : 'Inactivo'"
+                                        [severity]="item.active ? 'success' : 'danger'"
+                                    />
+                                </div>
+
+                                <p class="device-description">
+                                    {{ item.description || 'Sin descripción' }}
+                                </p>
+
+                                <dl class="device-details">
+                                    <div>
+                                        <dt>Placa</dt>
+                                        <dd>{{ item.board }}</dd>
+                                    </div>
+                                    <div>
+                                        <dt>Firmware</dt>
+                                        <dd>{{ item.firmwareVersion }}</dd>
+                                    </div>
+                                    <div>
+                                        <dt>Hardware ID</dt>
+                                        <dd><code>{{ item.hardwareId }}</code></dd>
+                                    </div>
+                                    <div>
+                                        <dt>MQTT Client ID</dt>
+                                        <dd class="device-identifier" [title]="item.mqttClientId">
+                                            <code>{{ item.mqttClientId }}</code>
+                                        </dd>
+                                    </div>
+                                    <div>
+                                        <dt>Propietario</dt>
+                                        <dd>{{ item.ownerName || 'Sin asignar' }}</dd>
+                                    </div>
+                                    <div>
+                                        <dt>Dispositivos asociados</dt>
+                                        <dd>{{ item.existingDevicesQty }}</dd>
+                                    </div>
+                                </dl>
+                            </div>
+
+                            <div class="device-actions">
+                                <p-button
+                                    [outlined]="true"
+                                    severity="secondary"
+                                    ariaLabel="Ver detalles"
+                                    pTooltip="Ver detalles"
+                                    tooltipPosition="left"
+                                    (onClick)="viewSensorsAndActuators(item.id)"
+                                >
+                                    <ng-template #icon>
+                                        <span class="material-symbols-outlined action-icon" aria-hidden="true">
+                                            visibility
+                                        </span>
+                                    </ng-template>
+                                </p-button>
+                            </div>
+                        </article>
+                    }
+                </div>
+            </ng-template>
+        </p-dataview>
+    }
+</section>

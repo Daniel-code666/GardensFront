@@ -1,0 +1,18 @@
+<header class="topbar">
+    <a class="brand" routerLink="/dashboard" aria-label="Inicio de Huerta">
+        <span class="brand-icon" aria-hidden="true"><i></i></span>
+        <span>
+            <strong>Huerta</strong>
+            <small>Panel de gestión</small>
+        </span>
+    </a>
+
+    <div class="user-summary">
+        <span class="user-avatar">{{ session.user()?.name?.charAt(0) || 'A' }}</span>
+        <span class="user-copy">
+            <strong>{{ session.user()?.name || 'Administrador' }}</strong>
+            <small>{{ session.user()?.roleName }}</small>
+        </span>
+        <button class="ghost-button" type="button" (click)="logout()">Cerrar sesión</button>
+    </div>
+</header>

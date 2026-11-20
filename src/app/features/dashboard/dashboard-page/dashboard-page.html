@@ -1,0 +1,362 @@
+@if (selectedMicrocontroller() != null) {
+<div class="page-heading dashboard-heading">
+    <div>
+        <p class="eyebrow">Resumen operativo</p>
+
+        <h1>Panel principal</h1>
+
+        <p>
+            Estado, telemetría y actividad reciente de los dispositivos
+        </p>
+    </div>
+
+    <div class="microcontroller-selector">
+        <label for="microcontroller">
+            Microcontrolador
+        </label>
+
+        <p-select inputId="microcontroller" [options]="microcontrollers()" [ngModel]="selectedMicrocontroller()"
+            (ngModelChange)="onMicrocontrollerChange($event)" optionLabel="name"
+            placeholder="Seleccione un microcontrolador" />
+    </div>
+</div>
+
+<section class="panel device-summary">
+    <div class="status-dot">
+        <span></span>
+    </div>
+
+    <div class="summary-item">
+        <small>Estado de configuración</small>
+        <strong>{{selectedMicrocontroller()?.provisioningState}}</strong>
+    </div>
+
+    <div class="summary-item">
+        <small>Broker MQTT</small>
+        <strong>{{selectedMicrocontroller()?.mqttCredentialStatus}}</strong>
+    </div>
+
+    <div class="summary-item">
+        <small>Telemetría</small>
+        <strong class="mono">Actividad hace 30 s</strong>
+    </div>
+
+    <div class="summary-item">
+        <small>Firmware</small>
+        <strong class="mono">{{selectedMicrocontroller()?.firmwareVersion}}</strong>
+    </div>
+
+    <div class="summary-item">
+        <small>Inventario</small>
+        <strong>{{ deviceTypeSummary().sensors }} sensores · {{deviceTypeSummary().actuators}} actuadores</strong>
+    </div>
+
+    <button class="primary-button summary-action"
+        [routerLink]="['/dashboard', 'my-devices', 'devices', selectedMicrocontroller()?.id]">
+        Ver dispositivos
+        <span aria-hidden="true">→</span>
+    </button>
+</section>
+<div class="dashboard-grid">
+    <!-- TELEMETRÍA -->
+    <section class="dashboard-card telemetry-card">
+        <div class="card-heading">
+            <div>
+                <small class="card-eyebrow">Telemetría en tiempo real</small>
+
+                @if (selectedTelemetryDevice(); as device) {
+                    <h2>{{ device.name }}</h2>
+
+                    <p>
+                    {{ device.deviceType }}
+                    · {{ device.connectionType }}
+                    · GPIO {{ device.devicePin ?? 'N/A' }}
+                    </p>
+                }
+            </div>
+
+            <button class="secondary-button" (click)="viewTelemetry(selectedTelemetryDevice()?.id ?? 0)">
+            Ver datos históricos
+            </button>
+        </div>
+
+        <div class="telemetry-current">
+            <span class="status-badge success">
+            <i></i>
+            Recibiendo
+            </span>
+        </div>
+
+        <div class="telemetry-navigation">
+            <button
+            type="button"
+            class="telemetry-nav-button"
+            aria-label="Dispositivo anterior"
+            (click)="previousTelemetryDevice()"
+            >
+            <span class="material-symbols-outlined">
+                chevron_left
+            </span>
+            </button>
+
+            <span class="telemetry-counter">
+            {{ selectedTelemetryIndex() + 1 }}
+            /
+            {{ telemetryDevices().length }}
+            </span>
+
+            <button
+            type="button"
+            class="telemetry-nav-button"
+            aria-label="Dispositivo siguiente"
+            (click)="nextTelemetryDevice()"
+            >
+            <span class="material-symbols-outlined">
+                chevron_right
+            </span>
+            </button>
+
+        </div>
+
+        <div class="chart-placeholder">
+            <p-chart
+                type="line"
+                [data]="chartData()"
+                [options]="options"
+                height="250px"
+                ariaLabel="Gráfica de telemetría en tiempo real"
+            />
+        </div>
+    </section>
+
+
+    <!-- ÚLTIMAS LECTURAS -->
+    <section class="dashboard-card readings-card">
+        <small class="card-eyebrow">Últimas lecturas</small>
+        <h2>Condiciones de la huerta</h2>
+
+        <div class="readings-grid">
+            <article class="reading-item">
+                <span class="reading-icon">
+                    <span class="material-symbols-outlined">water_drop</span>
+                </span>
+
+                <div>
+                    <small>Humedad del suelo</small>
+                    <strong>{{ latestReadings().soilMoisture }}</strong>
+                </div>
+            </article>
+
+            <article class="reading-item">
+                <span class="reading-icon reading-icon--warning">
+                    <span class="material-symbols-outlined">thermostat</span>
+                </span>
+
+                <div>
+                    <small>Temperatura</small>
+                    <strong>{{ latestReadings().temperature }}</strong>
+                </div>
+            </article>
+
+            <article class="reading-item">
+                <span class="reading-icon">
+                    <span class="material-symbols-outlined">humidity_percentage</span>
+                </span>
+
+                <div>
+                    <small>Humedad ambiente</small>
+                    <strong>{{ latestReadings().airHumidity }}</strong>
+                </div>
+            </article>
+
+            <article class="reading-item">
+                <span class="reading-icon reading-icon--warning">
+                    <span class="material-symbols-outlined">light_mode</span>
+                </span>
+
+                <div>
+                    <small>Iluminancia</small>
+                    <strong>{{ latestReadings().illuminance }}</strong>
+                </div>
+            </article>
+        </div>
+    </section>
+
+
+    <!-- ACTUADORES -->
+    <section class="dashboard-card actuators-card">
+        <small class="card-eyebrow">Actuadores</small>
+        <h2>Actuadores registrados</h2>
+
+        <div class="actuator-list">
+            @for (actuator of actuatorCards(); track actuator.id) {
+            <div class="actuator-row">
+                <div class="actuator-name">
+                    <span
+                        class="state-dot"
+                        [class.active]="actuator.state === true"
+                        [class.inactive]="actuator.state === false"
+                        [class.unknown]="actuator.state === null"
+                    ></span>
+                    <strong>{{ actuator.name }}</strong>
+                </div>
+
+                <div class="actuator-values">
+                    <span class="actuator-mode">
+                        {{ actuator.modeLabel }}
+                    </span>
+
+                    <span
+                        class="actuator-state"
+                        [class.active]="actuator.state === true"
+                        [class.unknown]="actuator.state === null"
+                    >
+                        {{ actuator.stateLabel }}
+                    </span>
+                </div>
+            </div>
+            } @empty {
+            <div class="empty-message">
+                No se encontraron actuadores.
+            </div>
+            }
+        </div>
+    </section>
+
+
+    <!-- SENSORES -->
+    <section class="dashboard-card inventory-card sensors-card">
+        <div class="inventory-heading">
+            <span class="inventory-icon">
+                <span class="material-symbols-outlined">sensors</span>
+            </span>
+
+            <div>
+                <small class="card-eyebrow">Inventario</small>
+                <h2>Sensores</h2>
+            </div>
+        </div>
+
+        <div class="quick-device-list">
+            @for (device of sensorDevices(); track device.id) {
+            <article class="quick-device-row">
+                <span class="state-dot" [class.active]="device.active" [class.inactive]="!device.active"></span>
+
+                <div class="quick-device-content">
+                    <strong>{{ device.name }}</strong>
+
+                    <small>
+                        {{ device.lastSeenAt ?? 'Sin actualización reciente' }}
+                    </small>
+                </div>
+
+                <span class="status-indicator" [class.active]="device.active" [class.inactive]="!device.active">
+                    {{ device.active ? 'Activo' : 'Inactivo' }}
+                </span>
+
+                <button type="button" class="view-device-button" [attr.aria-label]="'Ver telemetría de ' + device.name"
+                    (click)="viewTelemetry(device.id)">
+                    <span class="material-symbols-outlined">visibility</span>
+                </button>
+            </article>
+            } @empty {
+            <div class="empty-message">
+                No se encontraron actuadores.
+            </div>
+            }
+        </div>
+    </section>
+
+
+    <!-- ACTUADORES INVENTARIO -->
+    <section class="dashboard-card inventory-card actuators-inventory-card">
+        <div class="inventory-heading">
+            <span class="inventory-icon actuator-icon">
+                <span class="material-symbols-outlined">electric_bolt</span>
+            </span>
+
+            <div>
+                <small class="card-eyebrow">Inventario</small>
+                <h2>Actuadores</h2>
+            </div>
+        </div>
+
+        <div class="quick-device-list">
+            @for (device of actuatorDevices(); track device.id) {
+            <article class="quick-device-row">
+                <span class="state-dot" [class.active]="device.active" [class.inactive]="!device.active"></span>
+
+                <div class="quick-device-content">
+                    <strong>{{ device.name }}</strong>
+
+                    <small>
+                        {{ device.lastSeenAt ?? 'Sin actualización reciente' }}
+                    </small>
+                </div>
+
+                <span class="status-indicator" [class.active]="device.active" [class.inactive]="!device.active">
+                    {{ device.active ? 'Activo' : 'Inactivo' }}
+                </span>
+
+                <button type="button" class="view-device-button" [attr.aria-label]="'Ver telemetría de ' + device.name"
+                    (click)="viewTelemetry(device.id)">
+                    <span class="material-symbols-outlined">visibility</span>
+                </button>
+            </article>
+            } @empty {
+            <div class="empty-message">
+                No se encontraron actuadores.
+            </div>
+            }
+        </div>
+    </section>
+
+
+    <!-- ACTIVIDAD RECIENTE -->
+    <section class="dashboard-card activity-card">
+        <small class="card-eyebrow">Actividad reciente</small>
+        <h2>Comandos enviados</h2>
+
+        <div class="activity-list">
+            @for (command of commands(); track command.id)
+            {
+            <article class="activity-row">
+                <span class="state-dot active"></span>
+
+                <div class="activity-content">
+                    <strong>{{command.command}}</strong>
+                    <small>Hora de publicación: {{command.publishedAt}}</small>
+                    <small>Completado a las: {{command.completedAt}}</small>
+                </div>
+
+                <span
+                    class="activity-status"
+                    [class.pending]="command.status === 'Pending'"
+                    [class.published]="command.status === 'Published'"
+                    [class.completed]="command.status === 'Completed'"
+                    [class.failed]="command.status === 'Failed'"
+                    [class.expired]="command.status === 'Expired'"
+                    >
+                    {{ command.status }}
+                </span>
+            </article>
+            }
+        </div>
+    </section>
+
+</div>
+
+}
+@else {
+<div class="page-heading dashboard-heading">
+    <div>
+        <p class="eyebrow">Resumen operativo</p>
+
+        <h1>Actualmente no tiene dispositivos asignados, para empezar a ver datos enlace el ESP</h1>
+        <button class="primary-button summary-action" [routerLink]="['/dashboard', 'provisioning']">
+            Enlazar ESP
+            <span aria-hidden="true">→</span>
+        </button>
+    </div>
+</div>
+}

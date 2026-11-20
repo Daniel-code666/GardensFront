@@ -1,0 +1,153 @@
+<div class="page-heading">
+    <div>
+        <h1>Enlazar dispositivo ESP</h1>
+        <p>Identifique el equipo por USB y entréguele Wi-Fi y el acceso temporal al backend.</p>
+    </div>
+    <span class="status-badge" [class.success]="serial.connected()" [class.warning]="!serial.connected()">
+        <i></i> {{ serial.connected() ? 'USB conectado' : 'Sin conexión USB' }}
+    </span>
+</div>
+
+@if (!serial.supported) {
+<div class="alert alert-error" role="alert">
+    Web Serial no está disponible. Abra esta aplicación en Chrome o Edge mediante localhost.
+</div>
+}
+
+<section class="panel serial-panel">
+    <div class="panel-heading">
+        <span class="panel-icon usb">USB</span>
+        <div>
+            <h2>Conexión física</h2>
+            <p>Seleccione el puerto del ESP32. El navegador pedirá autorización explícita.</p>
+        </div>
+    </div>
+    <div class="button-row">
+        @if (!serial.connected()) {
+        <button class="primary-button" type="button" (click)="connect()" [disabled]="!serial.supported">
+            Conectar dispositivo
+        </button>
+        } @else {
+        <button class="secondary-button" type="button" (click)="identify()">Identificar ESP</button>
+        <button class="ghost-button" type="button" (click)="disconnect()">Desconectar</button>
+        }
+    </div>
+</section>
+
+@if (device(); as identified) {
+<section class="device-card">
+    <div class="device-icon" aria-hidden="true"><span></span></div>
+    <div class="device-main">
+        <span>Dispositivo identificado</span>
+        <strong>{{ identified.deviceId }}</strong>
+        <small>{{ identified.board }} · Firmware {{ identified.firmwareVersion }}</small>
+    </div>
+    <div class="device-flags">
+        <span [class.ok]="identified.wifiConfigured">Wi-Fi</span>
+        <span [class.ok]="identified.mqttConfigured">MQTT</span>
+        <span class="state">{{ identified.provisioningState }}</span>
+    </div>
+</section>
+}
+
+<form [formGroup]="form" (ngSubmit)="startProvisioning()" novalidate>
+    <section class="panel">
+        <div class="panel-heading">
+            <span class="panel-icon leaf">ESP</span>
+            <div>
+                <h2>Datos de la huerta</h2>
+                <p>Estos datos se utilizarán para registrar el microcontrolador en el backend.</p>
+            </div>
+        </div>
+        <div class="form-grid two-columns">
+            <div class="field">
+                <label for="name">Nombre</label>
+                <input id="name" formControlName="name" maxlength="100" placeholder="Huerta principal" />
+            </div>
+            <div class="field">
+                <label for="description">Descripción</label>
+                <input id="description" formControlName="description" maxlength="500"
+                    placeholder="Huerta ubicada en el patio" />
+            </div>
+        </div>
+    </section>
+
+    <section class="panel wifi-panel">
+        <div class="panel-heading">
+            <span class="panel-icon wifi">Wi</span>
+            <div>
+                <h2>Red Wi-Fi del ESP</h2>
+                <p>La contraseña viaja directamente por USB y no se guarda en el frontend.</p>
+            </div>
+        </div>
+        <div class="form-grid two-columns">
+            <div class="field">
+                <label for="ssid">Nombre de red (SSID)</label>
+                <input id="ssid" formControlName="ssid" maxlength="32" autocomplete="off" />
+            </div>
+            <div class="field">
+                <label for="wifiPassword">Contraseña</label>
+
+                <div class="password-field">
+                    <input id="wifiPassword" [type]="showPassword() ? 'text' : 'password'" formControlName="password"
+                        maxlength="64" autocomplete="new-password" />
+
+                    <button class="visibility-button" type="button" (click)="showPassword.set(!showPassword())"
+                        [attr.aria-label]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'">
+                        {{ showPassword() ? 'Ocultar' : 'Ver' }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    @if (currentStatus(); as status) {
+    <section class="progress-card" [class.failed]="status.status === 'failed'" aria-live="polite">
+        <span class="pulse" aria-hidden="true"></span>
+        <div><small>Estado del ESP</small><strong>{{ status.stage }} · {{ status.status }}</strong></div>
+        @if (status.errorCode) { <code>{{ status.errorCode }}</code> }
+    </section>
+    }
+
+    @if (finalResult(); as result) {
+    <div class="alert" [class.alert-success]="result.success" [class.alert-error]="!result.success">
+        {{ result.success ? 'Configuración completada por el ESP.' : 'Configuración fallida.' }}
+        @if (result.failureCode) { Código: {{ result.failureCode }}. }
+    </div>
+    }
+
+    @if (message()) {
+    <div class="alert alert-info" role="status">{{ message() }}</div>
+    }
+    @if (errorMessage()) {
+    <div class="alert alert-error" role="alert">{{ errorMessage() }}</div>
+    }
+
+    <div class="provision-actions">
+        <button class="danger-button" type="button" (click)="resetConfiguration()"
+            [disabled]="busy() || resetBusy() || provisioningActive() || !serial.connected() || !device()">
+            {{ resetBusy() ? 'Eliminando…' : 'Eliminar configuración' }}
+        </button>
+        <button class="primary-button" type="submit"
+            [disabled]="busy() || resetBusy() || provisioningActive() || !serial.connected() || !device()">
+            {{ busy() ? 'Preparando…' : 'Crear y configurar dispositivo' }}
+        </button>
+    </div>
+</form>
+
+<section class="log-panel">
+    <div class="log-heading">
+        <div><span class="live-dot"></span><strong>Eventos del dispositivo</strong></div>
+        <button class="text-button" type="button" (click)="serial.clearLog()">Limpiar</button>
+    </div>
+    <div class="event-log" aria-live="polite">
+        @for (entry of serial.log(); track $index) {
+        <div class="log-entry" [class.error]="entry.kind === 'error'">
+            <time>{{ entry.timestamp.slice(11, 19) }}</time>
+            <span>{{ entry.message }}</span>
+        </div>
+        } @empty {
+        <p>Los estados JSON seguros enviados por el ESP aparecerán aquí.</p>
+        }
+    </div>
+</section>

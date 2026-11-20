@@ -1,0 +1,235 @@
+<div class="page-heading">
+    <div>
+        <h1>Administración de usuarios</h1>
+        <p>Gestione los usuarios activos o inactivos de la plataforma</p>
+    </div>
+
+    <button class="primary-button" type="button" (click)="openCreateDialog()">
+        Crear usuario
+    </button>
+</div>
+
+<section class="panel">
+    <div class="panel-heading">
+        <span class="material-symbols-outlined">
+            search
+        </span>
+
+        <div>
+            <h2>Usuarios</h2>
+        </div>
+    </div>
+
+    <div class="filters-grid">
+        <div class="field">
+            <label for="userSearch">Buscar</label>
+
+            <input id="userSearch" pInputText type="text" placeholder="Buscar usuario..."
+                (input)="dt.filterGlobal($any($event.target).value, 'contains')" />
+        </div>
+
+        <div class="field">
+            <label for="roleFilter">Filtrar por rol</label>
+
+            <p-select inputId="roleFilter" [options]="roles()" [(ngModel)]="selectedRole" optionLabel="name"
+                placeholder="Todos los roles" [showClear]="true" (onChange)="getAllUsers()" styleClass="role-select" />
+        </div>
+    </div>
+
+    <div class="table-container">
+        <p-table #dt [value]="users()" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 25, 50, 100]"
+            [scrollable]="true" scrollHeight="400px" dataKey="id"
+            [globalFilterFields]="['id', 'name', 'email', 'roleName']" [tableStyle]="{ 'min-width': '60rem' }"
+            [rowHover]="true">
+            <ng-template #header>
+                <tr>
+                    <th style="width: 3rem">
+                        <p-checkbox [binary]="true" [ngModel]="areAllGroupUsersSelected(dt.filteredValue ?? users())"
+                            [indeterminate]="isGroupSelectionPartial(dt.filteredValue ?? users())"
+                            [disabled]="!canSelectVisibleGroup(dt.filteredValue ?? users())"
+                            ariaLabel="Seleccionar usuarios visibles del último grupo"
+                            (onChange)="toggleGroupSelection(dt.filteredValue ?? users(), $event.checked)" />
+                    </th>
+
+                    <th pSortableColumn="id">
+                        Id
+                        <p-sortIcon field="id" />
+                    </th>
+
+                    <th pSortableColumn="name">
+                        Nombre
+                        <p-sortIcon field="name" />
+                    </th>
+
+                    <th pSortableColumn="email">
+                        Email
+                        <p-sortIcon field="email" />
+                    </th>
+
+                    <th pSortableColumn="roleName">
+                        Rol
+                        <p-sortIcon field="roleName" />
+                    </th>
+
+                    <th pSortableColumn="active">
+                        Estado
+                        <p-sortIcon field="active" />
+                    </th>
+
+                    <th style="width: 12rem">
+                        Acciones
+                    </th>
+                </tr>
+            </ng-template>
+
+            <ng-template #body let-user>
+                <tr [class.user-row-selected]="isUserSelected(user)">
+                    <td>
+                        <p-checkbox [binary]="true" [ngModel]="isUserSelected(user)"
+                            [ariaLabel]="'Seleccionar a ' + user.name"
+                            (onChange)="toggleUserSelection(user, $event.checked)" />
+                    </td>
+
+                    <td class="user-id">{{ user.id }}</td>
+                    <td>{{ user.name }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.roleName }}</td>
+                    <td>
+                        <span class="status-indicator" [class.active]="user.active" [class.inactive]="!user.active">
+                            {{ user.active ? 'Activo' : 'Inactivo' }}
+                        </span>
+                    </td>
+
+                    <td>
+                        <div class="table-actions">
+                            @if(user.active)
+                            {
+                            <p-button label="Actualizar" size="small" [outlined]="true" [disabled]="!user.active"
+                                [ariaLabel]="'Actualizar a ' + user.name" (onClick)="setFormToUpdateUser(user)">
+                                <ng-template #icon>
+                                    <span class="material-symbols-outlined table-action-icon"
+                                        aria-hidden="true">edit</span>
+                                </ng-template>
+                            </p-button>
+
+                            <p-button label="Eliminar" severity="danger" size="small" [outlined]="true"
+                                [disabled]="!user.active" [ariaLabel]="'Eliminar a ' + user.name"
+                                (onClick)="deleteUsers([user])">
+                                <ng-template #icon>
+                                    <span class="material-symbols-outlined table-action-icon"
+                                        aria-hidden="true">delete</span>
+                                </ng-template>
+                            </p-button>
+                            }
+                            @else
+                            {
+                            <p-button label="Reactivar" severity="warn" size="small" [outlined]="true"
+                                [disabled]="user.active" [ariaLabel]="'Reactivar a ' + user.name"
+                                (onClick)="reactivateUsers([user])">
+                                <ng-template #icon>
+                                    <span class="material-symbols-outlined table-action-icon"
+                                        aria-hidden="true">replay</span>
+                                </ng-template>
+                            </p-button>
+                            }
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+
+            <ng-template #emptymessage>
+                <tr>
+                    <td class="empty-message" colspan="7">
+                        No se encontraron usuarios.
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+    @if (selectedUsers().length > 0)
+    {
+    <div class="host-grid delete-actions">
+        @if (selectedUsers()[0].active) {
+        <button class="danger-button" type="button" (click)="deleteUsers(selectedUsers())">
+            Eliminar seleccionados
+        </button>
+        }
+        @else {
+        <button class="secondary-button" type="button" (click)="reactivateUsers(selectedUsers())">
+            Reactivar seleccionados
+        </button>
+        }
+    </div>
+    }
+
+    <app-dialog [visible]="updateDialogVisible()" (visibleChange)="onUpdateDialogVisibleChange($event)"
+        [title]="dialogTitle()">
+        <div>
+            <form [formGroup]="form" (ngSubmit)="saveUser()">
+                <div class="field wide">
+                    <input id="id" formControlName="id" hidden/>
+                </div>
+                <div class="field wide">
+                    <label for="name">Nombre</label>
+                    <input id="name" formControlName="name" placeholder="Pepe Grillo" />
+                    @if (form.controls.name.touched && form.controls.name.invalid) {
+                    <small class="field-error">El nombre es obligatorio.</small>
+                    }
+                </div>
+                <div class="field wide">
+                    <label for="email">Email</label>
+                    <input id="email" formControlName="email" placeholder="pep@email.com" />
+                    @if (form.controls.email.touched && form.controls.email.invalid) {
+                    <small class="field-error">Ingrese un correo electrónico válido.</small>
+                    }
+                </div>
+                <div class="field wide">
+                    <label for="password">Contraseña</label>
+                    <div class="password-field">
+                        <input
+                            id="password"
+                            [type]="showPassword() ? 'text' : 'password'"
+                            formControlName="password"
+                            autocomplete="new-password"
+                            placeholder="Contraseña nueva"
+                        />
+
+                        <button
+                            class="visibility-button"
+                            type="button"
+                            (click)="showPassword.set(!showPassword())"
+                            [attr.aria-label]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+                        >
+                            {{ showPassword() ? 'Ocultar' : 'Ver' }}
+                        </button>
+                    </div>
+                    @if (form.controls.password.touched && form.controls.password.invalid) {
+                    <small class="field-error">
+                        {{ userToUpdate() ? 'La contraseña no es válida.' : 'La contraseña es obligatoria.' }}
+                    </small>
+                    }
+                </div>
+                <div class="field wide">
+                    <label for="roleId">Rol</label>
+                    <p-select inputId="roleId" [options]="roles()" formControlName="roleId" 
+                    optionLabel="name" optionValue="id" placeholder="seleccione un rol" 
+                    (onChange)="onRoleChange($event.value)" styleClass="role-form-select" />
+                    @if (form.controls.roleId.touched && form.controls.roleId.invalid) {
+                    <small class="field-error">Seleccione un rol.</small>
+                    }
+                </div>
+
+                @if (error()) {
+                <div class="alert alert-error" role="alert">{{ error() }}</div>
+                }
+
+                <button class="secondary-button login-button" type="submit" [disabled]="loading()">
+                    {{ loading()
+                        ? (userToUpdate() ? 'Actualizando usuario' : 'Creando usuario')
+                        : (userToUpdate() ? 'Actualizar usuario' : 'Crear usuario')
+                    }}
+                </button>
+            </form>
+        </div>
+    </app-dialog>
+</section>

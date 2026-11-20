@@ -1,0 +1,136 @@
+<div class="page-heading">
+    <div>
+        <h1>Administración de roles</h1>
+        <p>Gestione los roles disponibles y sus permisos generales</p>
+    </div>
+
+    <button class="primary-button" type="button" (click)="openCreateDialog()">
+        Crear rol
+    </button>
+</div>
+
+<section class="panel">
+    <div class="panel-heading">
+        <span class="material-symbols-outlined" aria-hidden="true">shield_person</span>
+
+        <div>
+            <h2>Roles</h2>
+        </div>
+    </div>
+
+    <div class="filters-grid">
+        <div class="field">
+            <label for="roleSearch">Buscar</label>
+            <input id="roleSearch" pInputText type="text" placeholder="Buscar rol..."
+                (input)="dt.filterGlobal($any($event.target).value, 'contains')" />
+        </div>
+
+        <div class="field">
+            <label for="roleTypeFilter">Filtrar por tipo</label>
+            <p-select inputId="roleTypeFilter" [options]="roleTypes" [(ngModel)]="selectedRoleType"
+                optionLabel="label" optionValue="value" placeholder="Todos los tipos" [showClear]="true"
+                (onChange)="dt.filter($event.value, 'administrativeRole', 'equals')" styleClass="role-type-select" />
+        </div>
+    </div>
+
+    @if (error() && !dialogVisible()) {
+    <div class="alert alert-error" role="alert">{{ error() }}</div>
+    }
+
+    <div class="table-container">
+        <p-table #dt [value]="roles()" [paginator]="true" [rows]="10"
+            [rowsPerPageOptions]="[10, 25, 50]" dataKey="id"
+            [globalFilterFields]="['id', 'name', 'description']"
+            [tableStyle]="{ 'min-width': '48rem' }" [rowHover]="true">
+            <ng-template #header>
+                <tr>
+                    <th pSortableColumn="id">
+                        Id
+                        <p-sortIcon field="id" />
+                    </th>
+                    <th pSortableColumn="name">
+                        Nombre
+                        <p-sortIcon field="name" />
+                    </th>
+                    <th pSortableColumn="description">
+                        Descripción
+                        <p-sortIcon field="description" />
+                    </th>
+                    <th pSortableColumn="administrativeRole">
+                        Tipo
+                        <p-sortIcon field="administrativeRole" />
+                    </th>
+                    <th style="width: 10rem">Acciones</th>
+                </tr>
+            </ng-template>
+
+            <ng-template #body let-role>
+                <tr>
+                    <td class="role-id">{{ role.id }}</td>
+                    <td>{{ role.name }}</td>
+                    <td>{{ role.description }}</td>
+                    <td>
+                        <span class="role-type" [class.administrative]="role.administrativeRole">
+                            {{ role.administrativeRole ? 'Administrativo' : 'No administrativo' }}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="table-actions">
+                            <p-button label="Actualizar" size="small" [outlined]="true"
+                                [ariaLabel]="'Actualizar el rol ' + role.name"
+                                (onClick)="openUpdateDialog(role)">
+                                <ng-template #icon>
+                                    <span class="material-symbols-outlined table-action-icon"
+                                        aria-hidden="true">edit</span>
+                                </ng-template>
+                            </p-button>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+
+            <ng-template #emptymessage>
+                <tr>
+                    <td class="empty-message" colspan="5">
+                        {{ loading() ? 'Cargando roles...' : 'No se encontraron roles.' }}
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+    <app-dialog [visible]="dialogVisible()" (visibleChange)="onDialogVisibleChange($event)"
+        [title]="dialogTitle()">
+        <form [formGroup]="form" (ngSubmit)="saveRole()" class="role-form">
+            <div class="field">
+                <label for="roleName">Nombre</label>
+                <input id="roleName" pInputText formControlName="name" placeholder="Nombre del rol" />
+                @if (form.controls.name.touched && form.controls.name.invalid) {
+                <small class="field-error">El nombre es obligatorio.</small>
+                }
+            </div>
+
+            <div class="field">
+                <label for="roleDescription">Descripción</label>
+                <input id="roleDescription" pInputText formControlName="description"
+                    placeholder="Descripción del rol" />
+                @if (form.controls.description.touched && form.controls.description.invalid) {
+                <small class="field-error">La descripción es obligatoria.</small>
+                }
+            </div>
+
+            <div class="administrative-field">
+                <p-checkbox inputId="administrativeRole" formControlName="administrativeRole" [binary]="true" />
+                <label for="administrativeRole">Rol administrativo</label>
+            </div>
+
+            @if (error()) {
+            <div class="alert alert-error" role="alert">{{ error() }}</div>
+            }
+
+            <button class="secondary-button submit-button" type="submit" [disabled]="loading()">
+                {{ loading() ? 'Guardando...' : (roleToUpdate() ? 'Actualizar rol' : 'Crear rol') }}
+            </button>
+        </form>
+    </app-dialog>
+</section>

@@ -1,0 +1,164 @@
+<p-breadcrumb class="page-breadcrumb" [model]="breadcrumbItems" />
+<div class="page-heading">
+    <div>
+        <h1>Sensores y actuadores del dispositivo {{loadedMicrocontroller()?.name}}</h1>
+        <p>Revise la información de los sensores y actuadores relacionados al microcontrolador</p>
+    </div>
+</div>
+
+<div class="device-search">
+  <label for="device-search-input">Buscar dispositivo</label>
+
+  <div class="device-search__control">
+    <span class="material-symbols-outlined" aria-hidden="true">
+      search
+    </span>
+
+    <input
+      id="device-search-input"
+      type="search"
+      placeholder="Nombre, pin, conexión o medición..."
+      [value]="searchTerm()"
+      (input)="onSearch($event)"
+    />
+
+    @if (searchTerm()) {
+      <button
+        type="button"
+        class="device-search__clear"
+        aria-label="Limpiar búsqueda"
+        (click)="clearSearch()"
+      >
+        <span class="material-symbols-outlined" aria-hidden="true">
+          close
+        </span>
+      </button>
+    }
+  </div>
+</div>
+
+<section class="panel devices-panel">
+    @if (loading()) {
+    <div class="device-state" role="status">
+        <span class="material-symbols-outlined" aria-hidden="true">progress_activity</span>
+        Cargando dispositivos…
+    </div>
+    } @else if (error()) {
+    <div class="alert alert-error" role="alert">{{ error() }}</div>
+    } @else if (devices().length === 0) {
+        <div class="device-state device-state--empty">
+            <span class="material-symbols-outlined" aria-hidden="true">developer_board_off</span>
+            <strong>No hay dispositivos asociados.</strong>
+            <small>Los microcontroladores enlazados aparecerán en esta sección.</small>
+        </div>
+    } @else {
+        <p-dataview
+            [value]="filteredDevices()"
+            [rows]="5"
+            [paginator]="filteredDevices().length > 5"
+        >
+            <ng-template #list let-items>
+                <div class="device-list">
+                    @for(item of items; track item.id; let first = $first) {
+                        <article class="device-item" [class.device-item--divided]="!first">
+                            <div class="device-icon" aria-hidden="true">
+                                @if (item.deviceType === 'Sensor')
+                                {
+                                    <span class="material-symbols-outlined">sensors</span>
+                                }
+                                @else {
+                                    <span class="material-symbols-outlined">electric_bolt</span>
+                                }
+                            </div>
+
+                            <div class="device-content">
+                                <div class="device-title-row">
+                                    <h2>{{ item.name }}</h2>
+                                    <p-tag
+                                        [value]="item.active ? 'Activo' : 'Inactivo'"
+                                        [severity]="item.active ? 'success' : 'danger'"
+                                    />
+                                </div>
+
+                                <p class="device-description">
+                                    {{ item.customName || 'Sin nombre personalizado' }}
+                                </p>
+
+                                <dl class="device-details">
+                                    <div>
+                                        <dt>Tipo de dispositivo</dt>
+                                        <dd class="device-identifier" [title]="item.deviceType">
+                                            <code>{{ item.deviceType }}</code>
+                                        </dd>
+                                    </div>
+                                    <div>
+                                        <dt>Pin de conexión</dt>
+                                        @if (item.connectionType == 'I2C')
+                                        {
+                                            <dd>Conectado a pines I2C</dd>
+                                        }
+                                        @else {
+                                            <dd>{{item.devicePin ?? 'No conectado'}}</dd>
+                                        }
+                                    </div>
+                                    <div>
+                                        <dt>Tipo de conexión</dt>
+                                        <dd>{{ item.connectionType }}</dd>
+                                    </div>
+                                    <div>
+                                        <dt>Tipo de medición</dt>
+                                        <dd><code>{{ item.deviceType === 'Sensor' ? item.measurementType : 'El actuador no mide nada' }}</code></dd>
+                                    </div>
+                                    <div>
+                                        <dt>Unidad de medición</dt>
+                                        <dd class="device-identifier" [title]="item.measurementUnit">
+                                            <code>{{ item.deviceType === 'Sensor' ? item.measurementUnit : 'El actuador no mide nada' }}</code>
+                                        </dd>
+                                    </div>
+                                </dl>
+                            </div>
+
+                            <aside class="special-pins">
+                                @if (item.connectionType === 'I2C')
+                                    {
+                                        <h3>Pines especiales</h3>
+                                        <dl>
+                                            <div>
+                                                <dt>Pin I2C SDA</dt>
+                                                <dd>{{ item.i2cSdaPin ?? 'No definido' }}</dd>
+                                            </div>
+                                            <div>
+                                                <dt>Pin I2C SCL</dt>
+                                                <dd>{{ item.i2cSclPin ?? 'No definido' }}</dd>
+                                            </div>
+                                            <div>
+                                                <dt>Dirección I2C</dt>
+                                                <dd>{{ item.i2cAddress || 'No definida' }}</dd>
+                                            </div>
+                                        </dl>
+                                    }
+                            </aside>
+
+                            <div class="device-actions">
+                                <p-button
+                                    [outlined]="true"
+                                    severity="secondary"
+                                    ariaLabel="Ver detalles"
+                                    pTooltip="Ver detalles"
+                                    tooltipPosition="left"
+                                    (onClick)="navigateToDeviceTelemetryDemand(item.id)"
+                                >
+                                    <ng-template #icon>
+                                        <span class="material-symbols-outlined action-icon" aria-hidden="true">
+                                            visibility
+                                        </span>
+                                    </ng-template>
+                                </p-button>
+                            </div>
+                        </article>
+                    }
+                </div>
+            </ng-template>
+        </p-dataview>
+    }
+</section>

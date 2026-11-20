@@ -1,0 +1,96 @@
+<div class="page-heading">
+  <div>
+    <h1>Red y servicios</h1>
+    <p>Indique cómo debe encontrar el ESP la API y RabbitMQ dentro de su red local.</p>
+  </div>
+  @if (savedConfiguration()) {
+    <span class="status-badge success"><i></i> Configuración activa</span>
+  } @else {
+    <span class="status-badge warning"><i></i> Pendiente</span>
+  }
+</div>
+
+@if (loading()) {
+  <section class="panel loading-panel">Consultando la configuración del backend…</section>
+} @else {
+  <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+    <section class="panel">
+      <div class="panel-heading">
+        <span class="panel-icon">API</span>
+        <div>
+          <h2>Backend .NET</h2>
+          <p>Dirección publicada por Docker y accesible desde el Wi-Fi del ESP.</p>
+        </div>
+      </div>
+
+      <div class="form-grid host-grid">
+        <div class="field wide">
+          <label for="apiHost">Host o IPv4 del equipo</label>
+          <input id="apiHost" formControlName="apiHost" placeholder="192.168.1.50" />
+          <small>No use localhost, 127.0.0.1, 0.0.0.0 ni host.docker.internal.</small>
+        </div>
+        <div class="field">
+          <label for="apiPort">Puerto</label>
+          <input id="apiPort" type="number" formControlName="apiPort" min="1" max="65535" />
+        </div>
+        <label class="switch-field">
+          <input type="checkbox" formControlName="apiUseTls" />
+          <span class="switch" aria-hidden="true"></span>
+          <span><strong>Usar HTTPS</strong><small>Active solo si el ESP confía en el certificado.</small></span>
+        </label>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-heading">
+        <span class="panel-icon mqtt">MQ</span>
+        <div>
+          <h2>Broker MQTT</h2>
+          <p>Dirección y puerto MQTT publicados por el contenedor de RabbitMQ.</p>
+        </div>
+      </div>
+
+      <div class="form-grid host-grid">
+        <div class="field wide">
+          <div class="label-row">
+            <label for="mqttHost">Host o IPv4 del broker</label>
+            <button class="text-button" type="button" (click)="copyApiHostToMqtt()">
+              Usar el mismo host
+            </button>
+          </div>
+          <input id="mqttHost" formControlName="mqttHost" placeholder="192.168.1.50" />
+        </div>
+        <div class="field">
+          <label for="mqttPort">Puerto</label>
+          <input id="mqttPort" type="number" formControlName="mqttPort" min="1" max="65535" />
+        </div>
+        <label class="switch-field">
+          <input type="checkbox" formControlName="mqttUseTls" />
+          <span class="switch" aria-hidden="true"></span>
+          <span><strong>Usar MQTT con TLS</strong><small>Normalmente desactivado en la prueba local.</small></span>
+        </label>
+      </div>
+    </section>
+
+    @if (savedConfiguration()) {
+      <section class="endpoint-summary" aria-label="Direcciones resultantes">
+        <div><span>API anunciada</span><code>{{ savedConfiguration()?.apiBaseUrl }}</code></div>
+        <div><span>Broker anunciado</span><code>{{ savedConfiguration()?.mqttEndpoint }}</code></div>
+      </section>
+    }
+
+    @if (message()) {
+      <div class="alert alert-success" role="status">{{ message() }}</div>
+    }
+    @if (errorMessage()) {
+      <div class="alert alert-error" role="alert">{{ errorMessage() }}</div>
+    }
+
+    <div class="form-actions">
+      <p>Esta configuración es global y se utilizará para todos los dispositivos.</p>
+      <button class="primary-button" type="submit" [disabled]="saving()">
+        {{ saving() ? 'Guardando…' : 'Guardar configuración' }}
+      </button>
+    </div>
+  </form>
+}

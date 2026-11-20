@@ -1,0 +1,143 @@
+:host {
+  display: block;
+  width: 100%;
+  max-width: 80rem;
+  margin: 0 auto;
+}
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.filters-grid .field {
+  min-width: 0;
+}
+
+.table-container {
+  width: 100%;
+  min-width: 0;
+  margin-top: 1.25rem;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  font-family: var(--font-sans);
+
+  --p-datatable-border-color: var(--border);
+  --p-datatable-header-cell-background: var(--primary-dark);
+  --p-datatable-header-cell-hover-background: var(--primary);
+  --p-datatable-header-cell-selected-background: var(--primary);
+  --p-datatable-header-cell-color: #fffef9;
+  --p-datatable-header-cell-hover-color: #ffffff;
+  --p-datatable-header-cell-selected-color: #ffffff;
+  --p-datatable-header-cell-border-color: rgba(255, 255, 255, 0.14);
+  --p-datatable-column-title-font-weight: 700;
+  --p-datatable-column-title-font-size: 0.78rem;
+  --p-datatable-sort-icon-color: var(--primary-border);
+  --p-datatable-sort-icon-hover-color: var(--accent-soft);
+  --p-datatable-row-background: var(--surface);
+  --p-datatable-row-hover-background: var(--primary-soft);
+  --p-datatable-row-color: var(--text);
+  --p-datatable-row-hover-color: var(--text);
+  --p-datatable-body-cell-border-color: var(--border);
+  --p-datatable-body-cell-font-size: 0.82rem;
+  --p-datatable-body-cell-font-weight: 500;
+  --p-datatable-paginator-bottom-border-color: var(--border);
+  --p-datatable-paginator-bottom-border-width: 1px 0 0;
+  --p-paginator-background: var(--surface);
+  --p-paginator-color: var(--text-muted);
+  --p-paginator-border-radius: 0;
+  --p-paginator-nav-button-color: var(--text-muted);
+  --p-paginator-nav-button-hover-color: var(--primary);
+  --p-paginator-nav-button-hover-background: var(--primary-soft);
+  --p-paginator-nav-button-selected-color: #ffffff;
+  --p-paginator-nav-button-selected-background: var(--primary);
+  --p-button-border-radius: 0.7rem;
+  --p-button-gap: 0.4rem;
+  --p-button-outlined-primary-border-color: var(--primary-border);
+  --p-button-outlined-primary-color: var(--primary);
+  --p-button-outlined-primary-hover-background: var(--primary-soft);
+  --p-button-outlined-primary-active-background: #dcebdc;
+}
+
+.table-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.table-action-icon {
+  width: auto;
+  overflow: visible;
+  font-size: 1.05rem;
+}
+
+.role-id {
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+}
+
+.role-type {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  color: var(--text-muted);
+  background: #edf0ec;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.role-type.administrative {
+  color: #245c36;
+  background: #e5f2e8;
+}
+
+.empty-message {
+  padding: 2.5rem 1rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.role-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.administrative-field {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.administrative-field label {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.submit-button {
+  width: 100%;
+  margin-top: 0.25rem;
+}
+
+:host ::ng-deep .role-type-select {
+  width: 100%;
+}
+
+@media (max-width: 700px) {
+  .page-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .filters-grid {
+    grid-template-columns: 1fr;
+  }
+}

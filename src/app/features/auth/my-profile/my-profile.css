@@ -1,0 +1,190 @@
+:host {
+  display: block;
+  width: 100%;
+  max-width: 80rem;
+  margin: 0 auto;
+}
+
+.host-grid {
+  width: 100%;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.delete-actions {
+  grid-column: 1 / -1;
+  width: 100%;
+  margin-top: 1.25rem;
+}
+
+.delete-actions button {
+  width: 100%;
+}
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.filters-grid .field {
+  min-width: 0;
+}
+
+.table-container {
+  width: 100%;
+  min-width: 0;
+  margin-top: 1.25rem;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  font-family: var(--font-sans);
+
+  /* PrimeNG DataTable tokens scoped to this table. */
+  --p-datatable-border-color: var(--border);
+  --p-datatable-header-cell-background: var(--primary-dark);
+  --p-datatable-header-cell-hover-background: var(--primary);
+  --p-datatable-header-cell-selected-background: var(--primary);
+  --p-datatable-header-cell-color: #fffef9;
+  --p-datatable-header-cell-hover-color: #ffffff;
+  --p-datatable-header-cell-selected-color: #ffffff;
+  --p-datatable-header-cell-border-color: rgba(255, 255, 255, 0.14);
+  --p-datatable-column-title-font-weight: 700;
+  --p-datatable-column-title-font-size: 0.78rem;
+  --p-datatable-sort-icon-color: var(--primary-border);
+  --p-datatable-sort-icon-hover-color: var(--accent-soft);
+  --p-datatable-row-background: var(--surface);
+  --p-datatable-row-hover-background: var(--primary-soft);
+  --p-datatable-row-selected-background: #dcebdc;
+  --p-datatable-row-color: var(--text);
+  --p-datatable-row-hover-color: var(--text);
+  --p-datatable-row-selected-color: var(--primary-dark);
+  --p-datatable-body-cell-border-color: var(--border);
+  --p-datatable-body-cell-font-size: 0.82rem;
+  --p-datatable-body-cell-font-weight: 500;
+  --p-datatable-paginator-bottom-border-color: var(--border);
+  --p-datatable-paginator-bottom-border-width: 1px 0 0;
+
+  /* PrimeNG Paginator tokens inherited by the table paginator. */
+  --p-paginator-background: var(--surface);
+  --p-paginator-color: var(--text-muted);
+  --p-paginator-border-radius: 0;
+  --p-paginator-nav-button-color: var(--text-muted);
+  --p-paginator-nav-button-hover-color: var(--primary);
+  --p-paginator-nav-button-hover-background: var(--primary-soft);
+  --p-paginator-nav-button-selected-color: #ffffff;
+  --p-paginator-nav-button-selected-background: var(--primary);
+
+  /* Action button tokens aligned with the Huerta palette. */
+  --p-button-border-radius: 0.7rem;
+  --p-button-gap: 0.4rem;
+  --p-button-outlined-primary-border-color: var(--primary-border);
+  --p-button-outlined-primary-color: var(--primary);
+  --p-button-outlined-primary-hover-background: var(--primary-soft);
+  --p-button-outlined-primary-active-background: #dcebdc;
+  --p-button-outlined-danger-border-color: rgba(177, 71, 62, 0.35);
+  --p-button-outlined-danger-color: var(--danger);
+  --p-button-outlined-danger-hover-background: rgba(177, 71, 62, 0.08);
+  --p-button-outlined-danger-active-background: rgba(177, 71, 62, 0.14);
+}
+
+.table-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+
+.user-row-selected > td {
+  background: #e5efe6;
+}
+
+.user-row-selected:hover > td {
+  background: #dcebdc;
+}
+
+.table-action-icon {
+  width: auto;
+  overflow: visible;
+  font-size: 1.05rem;
+}
+
+.user-id {
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+}
+
+.empty-message {
+  padding: 2.5rem 1rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+:host ::ng-deep .role-select {
+  width: 100%;
+}
+
+:host ::ng-deep .role-form-select {
+  width: 100%;
+}
+
+@media (max-width: 700px) {
+  .filters-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .table-actions {
+    flex-wrap: nowrap;
+  }
+}
+
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.status-indicator.active {
+  color: #245c36;
+  background: #e5f2e8;
+}
+
+.status-indicator.inactive {
+  color: var(--text-muted);
+  background: #edf0ec;
+}
+
+
+.password-field {
+  position: relative;
+}
+
+.password-field input {
+  padding-right: 4.5rem;
+}
+
+.visibility-button {
+  position: absolute;
+  top: 50%;
+  right: 0.75rem;
+  padding: 0.2rem;
+  border: 0;
+  color: var(--primary);
+  background: transparent;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.login-button {
+  width: 100%;
+  margin-top: 1.25rem;
+}

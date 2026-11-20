@@ -1,0 +1,659 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.device-summary {
+  display: grid;
+  grid-template-columns:
+    auto
+    minmax(8rem, 1fr)
+    minmax(8rem, 1fr)
+    minmax(10rem, 1.2fr)
+    minmax(6rem, 0.8fr)
+    minmax(10rem, 1.4fr)
+    auto;
+  align-items: center;
+  gap: 1.5rem;
+
+  padding: 1rem 1.25rem;
+  border-radius: 1.25rem;
+}
+
+.status-dot {
+  width: 2rem;
+  height: 2rem;
+  display: grid;
+  place-items: center;
+
+  border-radius: 50%;
+  background: var(--primary-soft);
+}
+
+.status-dot span {
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 50%;
+  background: var(--success);
+}
+
+.summary-item {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.summary-item small {
+  color: var(--text-subtle);
+  font-size: 0.68rem;
+  font-weight: 500;
+}
+
+.summary-item strong {
+  color: var(--text);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.summary-item .mono {
+  font-family: var(--font-mono);
+  font-weight: 500;
+}
+
+.summary-action {
+  min-width: 10rem;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+@media (max-width: 950px) {
+  .device-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .status-dot {
+    display: none;
+  }
+
+  .summary-action {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .device-summary {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dashboard-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, 23rem);
+  align-items: center;
+  gap: 2rem;
+}
+
+.dashboard-heading > div:first-child {
+  min-width: 0;
+}
+
+.dashboard-heading h1 {
+  margin-bottom: 0.35rem;
+}
+
+.dashboard-heading > div:first-child > p:last-child {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.microcontroller-selector {
+  min-width: 0;
+  padding: 0.75rem 1rem;
+
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.microcontroller-selector label {
+  display: block;
+  margin-bottom: 0.3rem;
+
+  color: var(--text-subtle);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.microcontroller-selector p-select {
+  width: 100%;
+}
+
+@media (max-width: 750px) {
+  .dashboard-heading {
+    grid-template-columns: 1fr;
+  }
+
+  .microcontroller-selector {
+    width: 100%;
+  }
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.5fr 1.5fr;
+  grid-template-areas:
+    "telemetry telemetry telemetry readings"
+    "telemetry telemetry telemetry actuators"
+    "sensors inventory activity activity";
+  gap: 1rem;
+}
+
+.dashboard-card {
+  min-width: 0;
+  padding: 1.35rem;
+
+  border: 1px solid var(--border);
+  border-radius: 1.15rem;
+
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.telemetry-card {
+  grid-area: telemetry;
+}
+
+.readings-card {
+  grid-area: readings;
+}
+
+.actuators-card {
+  grid-area: actuators;
+}
+
+.sensors-card {
+  grid-area: sensors;
+}
+
+.actuators-inventory-card {
+  grid-area: inventory;
+}
+
+.activity-card {
+  grid-area: activity;
+}
+
+
+/* HEADINGS */
+
+.card-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.card-heading h2,
+.dashboard-card h2 {
+  margin: 0.4rem 0 0.25rem;
+  font-size: 1rem;
+}
+
+.card-heading p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+}
+
+.card-eyebrow {
+  color: var(--accent);
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+
+/* TELEMETRÍA */
+
+.telemetry-current {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+
+  margin-top: 1.4rem;
+}
+
+.chart-placeholder {
+  margin-top: 1.25rem;
+}
+
+
+/* LECTURAS */
+
+.readings-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+
+  margin-top: 0.9rem;
+}
+
+.reading-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  padding: 0.75rem;
+
+  border-radius: 0.9rem;
+  background: var(--surface-muted);
+}
+
+.reading-icon {
+  flex: 0 0 auto;
+
+  width: 2.2rem;
+  height: 2.2rem;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 50%;
+
+  color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.reading-icon--warning {
+  color: var(--warning);
+  background: #f7e6c4;
+}
+
+.reading-icon .material-symbols-outlined {
+  font-size: 1.15rem;
+}
+
+.reading-item > div {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.reading-item small {
+  color: var(--text-muted);
+  font-size: 0.68rem;
+}
+
+.reading-item strong {
+  font-size: 0.9rem;
+}
+
+
+/* ACTUADORES */
+
+.actuator-list {
+  margin-top: 0.8rem;
+}
+
+.actuator-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+
+  min-height: 2.4rem;
+
+  border-bottom: 1px solid var(--border);
+}
+
+.actuator-row:last-child {
+  border-bottom: 0;
+}
+
+.actuator-name {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.actuator-name strong {
+  font-size: 0.74rem;
+}
+
+.actuator-values {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.actuator-mode {
+  color: var(--text-muted);
+  font-size: 0.65rem;
+}
+
+.state-dot {
+  flex: 0 0 auto;
+
+  width: 0.65rem;
+  height: 0.65rem;
+
+  border-radius: 50%;
+}
+
+.state-dot.active {
+  background: var(--success);
+}
+
+.state-dot.inactive {
+  background: var(--text-subtle);
+}
+
+.state-dot.unknown {
+  background: var(--border);
+}
+
+.actuator-state,
+.activity-status {
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+
+  color: var(--text-muted);
+  background: var(--surface-muted);
+
+  font-size: 0.65rem;
+}
+
+.actuator-state.active {
+  color: var(--success);
+  background: #e5f2e8;
+}
+
+.actuator-state.unknown {
+  color: var(--text-subtle);
+  background: var(--surface-muted);
+}
+
+/* INVENTARIO */
+
+.inventory-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.inventory-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.inventory-icon {
+  width: 2.4rem;
+  height: 2.4rem;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 50%;
+
+  color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.inventory-icon.actuator-icon {
+  color: var(--warning);
+  background: #f7e6c4;
+}
+
+/* ACTIVIDAD */
+
+.activity-list {
+  display: grid;
+  gap: 0.65rem;
+
+  margin-top: 0.8rem;
+}
+
+.activity-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.7rem;
+
+  padding: 0.7rem 0.85rem;
+
+  border-radius: 0.8rem;
+  background: var(--surface-muted);
+}
+
+.activity-content {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.activity-content strong {
+  font-size: 0.72rem;
+}
+
+.activity-content small {
+  color: var(--text-subtle);
+  font-size: 0.62rem;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 1100px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-areas:
+      "telemetry telemetry"
+      "readings actuators"
+      "sensors inventory"
+      "activity activity";
+  }
+}
+
+@media (max-width: 700px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "telemetry"
+      "readings"
+      "actuators"
+      "sensors"
+      "inventory"
+      "activity";
+  }
+
+  .readings-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card-heading {
+    flex-direction: column;
+  }
+
+  .card-heading button {
+    width: 100%;
+  }
+
+  .telemetry-current {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+.quick-device-list {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 1rem;
+
+  max-height: calc((4rem * 3) + (0.65rem * 2));
+  overflow-y: auto;
+
+  padding-right: 0.25rem;
+
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.quick-device-row {
+  min-height: 4rem;
+
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 0.75rem;
+
+  padding: 0.8rem 0.9rem;
+  border-radius: 0.9rem;
+
+  background: var(--surface-muted);
+}
+
+.quick-device-content {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.quick-device-content strong {
+  overflow: hidden;
+  font-size: 0.78rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.quick-device-content small {
+  color: var(--text-subtle);
+  font-size: 0.65rem;
+}
+
+.view-device-button {
+  width: 2rem;
+  height: 2rem;
+
+  display: grid;
+  place-items: center;
+
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+
+  color: var(--primary);
+  background: transparent;
+
+  cursor: pointer;
+  transition:
+    background 150ms ease,
+    color 150ms ease;
+}
+
+.view-device-button:hover {
+  background: var(--primary-soft);
+}
+
+.view-device-button .material-symbols-outlined {
+  font-size: 1.2rem;
+}
+
+.activity-status {
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  font-weight: 700;
+}
+
+.activity-status.pending {
+  color: var(--warning);
+  background: #f7e6c4;
+}
+
+.activity-status.published {
+  color: #365d6f;
+  background: #ebf3f6;
+}
+
+.activity-status.completed {
+  color: var(--success);
+  background: #e5f2e8;
+}
+
+.activity-status.failed {
+  color: var(--danger);
+  background: #faecea;
+}
+
+.activity-status.expired {
+  color: var(--text-muted);
+  background: #edf0ec;
+}
+
+.telemetry-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+
+  margin-top: 1rem;
+}
+
+.telemetry-nav-button {
+  width: 2.25rem;
+  height: 2.25rem;
+
+  display: grid;
+  place-items: center;
+
+  padding: 0;
+
+  border: 1px solid var(--border);
+  border-radius: 50%;
+
+  color: var(--primary);
+  background: var(--surface);
+
+  cursor: pointer;
+
+  transition:
+    background 150ms ease,
+    border-color 150ms ease;
+}
+
+.telemetry-nav-button:hover {
+  border-color: var(--primary-border);
+  background: var(--primary-soft);
+}
+
+.telemetry-nav-button .material-symbols-outlined {
+  font-size: 1.25rem;
+}
+
+.telemetry-counter {
+  min-width: 3rem;
+
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-align: center;
+}
